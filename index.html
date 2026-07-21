@@ -974,37 +974,56 @@ function countUp(el,target,sfx=""){
   requestAnimationFrame(step);
 }
 
-const TEAM_PHOTO_STORAGE_KEYS = {
-  ronson: "dias_team_ronson_photo",
-  rohan: "dias_team_rohan_photo"
-};
-
 function applyTeamPhotos(){
   const ronsonImg=document.getElementById("team-ronson-img");
   const rohanImg=document.getElementById("team-rohan-img");
-  if(ronsonImg) ronsonImg.src = localStorage.getItem(TEAM_PHOTO_STORAGE_KEYS.ronson) || "ronson.jpeg";
-  if(rohanImg) rohanImg.src = localStorage.getItem(TEAM_PHOTO_STORAGE_KEYS.rohan) || "rohan.jpeg";
+
+  const setImage=(img, filename, fallbackSrc)=>{
+    if(!img) return;
+    img.onerror=()=>{
+      if(img.dataset.fallbackApplied !== "1"){
+        img.src=fallbackSrc;
+        img.dataset.fallbackApplied="1";
+      }
+    };
+    img.dataset.fallbackApplied="0";
+    img.src=sb.storage.from(STORAGE_BUCKET).getPublicUrl(filename).data.publicUrl;
+  };
+
+  setImage(ronsonImg, "team-ronson.jpg", "ronson.jpeg");
+  setImage(rohanImg, "team-rohan.jpg", "rohan.jpeg");
 }
 
-function saveTeamPhoto(person){
+async function saveTeamPhoto(person){
   const input=document.getElementById(person==="ronson"?"team-ronson-file":"team-rohan-file");
   const status=document.getElementById(person==="ronson"?"team-ronson-status":"team-rohan-status");
   const file=input?.files?.[0];
   if(!file){ status.textContent="Please choose an image first."; return; }
   if(!file.type.startsWith("image/")){ status.textContent="Please choose a valid image file."; return; }
 
-  const reader=new FileReader();
-  reader.onload=()=>{
-    localStorage.setItem(TEAM_PHOTO_STORAGE_KEYS[person], reader.result);
-    applyTeamPhotos();
-    status.textContent=(person==="ronson"?"Ronson":"Rohan")+" photo updated.";
+  status.textContent="Uploading shared photo...";
+  try {
+    const filename=person==="ronson"?"team-ronson.jpg":"team-rohan.jpg";
+    const { error } = await sb.storage.from(STORAGE_BUCKET).upload(filename, file, {
+      cacheControl:"3600",
+      upsert:true,
+      contentType:file.type
+    });
+    if(error) throw error;
+
+    const img=document.getElementById(person==="ronson"?"team-ronson-img":"team-rohan-img");
+    if(img){
+      img.src=sb.storage.from(STORAGE_BUCKET).getPublicUrl(filename).data.publicUrl;
+      img.onerror=null;
+    }
+    status.textContent=(person==="ronson"?"Ronson":"Rohan")+" photo updated and saved across browsers.";
     input.value="";
-  };
-  reader.onerror=()=>{
-    status.textContent="The image could not be read.";
-  };
-  reader.readAsDataURL(file);
+  } catch(err){
+    console.error(err);
+    status.textContent="The photo could not be saved. Please try again.";
+  }
 }
+
 function getDeliveredCount(){
   const input=document.getElementById("adm-delivered-count");
   const override=parseInt(input?.value?.trim()||"",10);
