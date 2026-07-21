@@ -252,6 +252,8 @@ nav.stuck{background:rgba(8,8,8,.96);backdrop-filter:blur(12px);padding:1rem 4re
   transition:transform .2s,background .2s,border-color .2s;
 }
 .mobile-admin-btn:active,.mobile-admin-btn.active{transform:scale(.94);background:var(--ink4);border-color:var(--gold)}
+/* Admin access on phones is intentionally kept behind the footer triple-tap. */
+.mobile-admin-btn{display:none!important}
 
 /*─────────────────────────────────────────
   PORTFOLIO
@@ -458,7 +460,7 @@ footer{
   background:var(--ink);border-top:1px solid var(--line);
   padding:3.5rem 4rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;
 }
-.ft-brand{font-family:var(--serif);font-size:1rem;color:var(--gold);letter-spacing:.18em;font-weight:300}
+.ft-brand{font-family:var(--serif);font-size:1rem;color:var(--gold);letter-spacing:.18em;font-weight:300;background:none;border:0;padding:0;text-align:left}
 .ft-copy{font-size:.58rem;color:rgba(255,255,255,.2);letter-spacing:.1em}
 /* Secret trigger — invisible until hovered */
 #sec-trig{
@@ -527,7 +529,6 @@ footer{
   .add-form{grid-template-columns:1fr}
   footer{padding:2.5rem 1.5rem;flex-direction:column;align-items:flex-start}
   #ag,#ad{padding:4rem 1.5rem}
-  .mobile-admin-btn{display:flex}
   #lb-prev,#lb-next{display:none}
 }
 @media(max-width:600px){
@@ -536,8 +537,8 @@ footer{
   .hero-left{padding-top:6.5rem}
   .sec{padding:3.75rem 1.1rem}
   .about-grid{gap:2.2rem;margin-top:2.5rem}
-  .t-card{grid-template-columns:1fr;gap:1.15rem;padding:.8rem}
-  .t-card img{width:100%;height:auto;min-height:0;aspect-ratio:4/5;object-fit:cover;object-position:center top;border-radius:5px}
+  .t-card{grid-template-columns:1fr;gap:1rem;padding:.8rem}
+  .t-card img{width:min(150px,52vw);height:180px;min-height:0;aspect-ratio:auto;object-fit:cover;object-position:center top;border-radius:5px;margin:0 auto}
   .t-card-body{padding:.15rem .35rem .5rem}
   .t-name{font-size:1.7rem}
   .t-det{font-size:.82rem;line-height:1.75;overflow-wrap:anywhere}
@@ -549,7 +550,6 @@ footer{
   .pv-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}
   .adm-sec-title{margin:2.25rem 0 1rem}
   #toast{left:1rem;right:1rem;top:1rem;text-align:center}
-  .mobile-admin-btn{right:1rem;bottom:5.3rem}
   .pf-grid{grid-template-columns:1fr}
   .f-row{grid-template-columns:1fr}
 }
@@ -888,7 +888,7 @@ footer{
 
 <!-- FOOTER -->
 <footer>
-  <div class="ft-brand">DIAS ARCHITECTS</div>
+  <button type="button" class="ft-brand" id="footer-admin-trigger" aria-label="Dias Architects">DIAS ARCHITECTS</button>
   <div class="ft-copy">© 2024 Dias Architects. All rights reserved. | www.diasarchitects.in</div>
   <!-- SECRET TRIGGER: invisible text in footer — only accessible if you know it's there -->
   <!-- Access admin by typing: Ctrl+Shift+A  OR  click the invisible element below -->
@@ -1509,11 +1509,22 @@ function toast(msg,type="ok"){
   toast._t=setTimeout(()=>t.className="",3200);
 }
 
-// Mobile admin shortcut — authentication is still required after opening the panel.
+// Mobile-only footer triple-tap. Authentication is still required after opening.
 ;(function(){
-  const btn=document.getElementById('mobile-admin-btn');
-  if(!btn) return;
-  btn.addEventListener('click',()=>{ revealAdmin(); });
+  const trigger=document.getElementById('footer-admin-trigger');
+  if(!trigger) return;
+  let taps=0, resetTimer=null;
+  trigger.addEventListener('click',()=>{
+    if(window.matchMedia('(min-width: 961px)').matches) return;
+    taps++;
+    clearTimeout(resetTimer);
+    if(taps===3){
+      taps=0;
+      revealAdmin();
+      return;
+    }
+    resetTimer=setTimeout(()=>{ taps=0; },1000);
+  });
 })();
 </script>
 </body>
