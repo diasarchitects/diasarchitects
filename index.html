@@ -244,10 +244,14 @@ nav.stuck{background:rgba(8,8,8,.96);backdrop-filter:blur(12px);padding:1rem 4re
 .t-badge{display:inline-block;margin-top:.9rem;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--line2);color:var(--fog);padding:.3rem .7rem;align-self:flex-start}
 
 /* Mobile admin shortcut */
-.mobile-admin-btn{position:fixed;right:14px;bottom:18px;z-index:9999;display:none;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--ink3);border:1px solid rgba(198,168,75,.12);color:var(--gold);font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
-.mobile-admin-btn:active{transform:translateY(1px)}
-/* Keep the floating admin button disabled — admin available via footer long-press on mobile */
-.mobile-admin-btn{display:none!important}
+.mobile-admin-btn{
+  position:fixed;right:1.25rem;bottom:5.8rem;z-index:550;display:none;
+  align-items:center;justify-content:center;min-width:48px;height:48px;padding:0 .75rem;
+  border-radius:999px;background:var(--ink3);border:1px solid var(--line2);color:var(--gold);
+  font-size:.56rem;font-weight:600;letter-spacing:.14em;box-shadow:0 10px 30px rgba(0,0,0,.45);
+  transition:transform .2s,background .2s,border-color .2s;
+}
+.mobile-admin-btn:active,.mobile-admin-btn.active{transform:scale(.94);background:var(--ink4);border-color:var(--gold)}
 
 /*─────────────────────────────────────────
   PORTFOLIO
@@ -499,6 +503,8 @@ footer{
   MOBILE
 ─────────────────────────────────────────*/
 @media(max-width:960px){
+  body{cursor:auto}
+  #cur{display:none}
   nav{padding:1.2rem 1.5rem}
   nav.stuck{padding:.9rem 1.5rem}
   .n-links,.n-cta{display:none}
@@ -511,27 +517,39 @@ footer{
   .n-ham{display:flex}
   #hero{grid-template-columns:1fr;min-height:auto}
   .hero-right{display:none}
-  .hero-right{display:block}
-  .hero-right-img{display:none}
-  .hero-right-tag{position:relative;bottom:auto;right:auto;margin-top:1rem;display:flex;align-items:center;padding:.9rem 1rem}
   .hero-left{padding:7rem 1.5rem 5rem}
   .sec{padding:4.5rem 1.5rem}
   .about-grid,.contact-grid{grid-template-columns:1fr;gap:3rem}
-  .t-card{grid-template-columns:90px 1fr;gap:1rem;align-items:center}
-  .t-card img,.t-card picture img{width:90px;height:90px;min-height:0;object-fit:cover;border-radius:8px;flex:none}
+  .team-stack{gap:1rem}
+  .t-card{grid-template-columns:minmax(180px,38%) 1fr}
   .srv-grid,.proc-steps{grid-template-columns:1fr}
   .pf-grid{grid-template-columns:repeat(2,1fr)}
   .add-form{grid-template-columns:1fr}
   footer{padding:2.5rem 1.5rem;flex-direction:column;align-items:flex-start}
   #ag,#ad{padding:4rem 1.5rem}
-  /* Mobile typography + spacing tweaks */
-  h1.h1{font-size:2.2rem;line-height:1.05}
-  .t-name{font-size:1.15rem}
-  .t-det{font-size:.72rem}
-  .pf-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .mobile-admin-btn{display:flex}
   #lb-prev,#lb-next{display:none}
 }
 @media(max-width:600px){
+  .n-logo-mark{width:58px;height:58px}
+  .n-logo-text{font-size:.8rem;letter-spacing:.12em}
+  .hero-left{padding-top:6.5rem}
+  .sec{padding:3.75rem 1.1rem}
+  .about-grid{gap:2.2rem;margin-top:2.5rem}
+  .t-card{grid-template-columns:1fr;gap:1.15rem;padding:.8rem}
+  .t-card img{width:100%;height:auto;min-height:0;aspect-ratio:4/5;object-fit:cover;object-position:center top;border-radius:5px}
+  .t-card-body{padding:.15rem .35rem .5rem}
+  .t-name{font-size:1.7rem}
+  .t-det{font-size:.82rem;line-height:1.75;overflow-wrap:anywhere}
+  #ag,#ad{padding:3.25rem 1.1rem}
+  .adm-bar{align-items:flex-start;margin-bottom:2rem}
+  .adm-bar>div:last-child{width:100%;justify-content:space-between}
+  .dz{padding:2.25rem 1rem;margin-bottom:1.5rem}
+  .dz-txt{font-size:.72rem}
+  .pv-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}
+  .adm-sec-title{margin:2.25rem 0 1rem}
+  #toast{left:1rem;right:1rem;top:1rem;text-align:center}
+  .mobile-admin-btn{right:1rem;bottom:5.3rem}
   .pf-grid{grid-template-columns:1fr}
   .f-row{grid-template-columns:1fr}
 }
@@ -630,11 +648,7 @@ footer{
     </div>
     <div class="team-stack rv delay2">
       <div class="t-card">
-        <picture>
-          <source type="image/png" srcset="images/ronson-dias.png">
-          <source type="image/jpeg" srcset="images/ronson-dias.jpg">
-          <img src="ronson.jpeg" alt="Ronson Dias" loading="lazy" onerror="this.onerror=null;this.src='images/ronson-dias.svg'">
-        </picture>
+        <img src="ronson.jpeg" alt="Ronson Dias"/>
         <div class="t-card-body">
           <div class="t-role">Principal Architect</div>
           <div class="t-name">Ronson Dias</div>
@@ -642,18 +656,12 @@ footer{
             Architecture Design &amp; Planning<br/>
             <a href="tel:+919945228498">+91 99452 28498</a><br/>
             <a href="mailto:ronsondias03@gmail.com">ronsondias03@gmail.com</a>
-            <img src="ronson.jpeg" alt="Ronson Dias" loading="lazy">
-            <div class="t-card-body">
+          </div>
           <span class="t-badge">B.Arch</span>
         </div>
       </div>
       <div class="t-card">
-        <picture>
-          <source type="image/png" srcset="images/rohan-dias.png">
-          <source type="image/jpeg" srcset="images/rohan-dias.jpg">
-          <img src="rohan.jpe" alt="Rohan Dias" loading="lazy" onerror="this.onerror=null;this.src='images/rohan-dias.svg'">
-            <img src="rohan.jpeg" alt="Rohan Dias" loading="lazy">
-            <div class="t-card-body">
+        <img src="rohan.jpeg" alt="Rohan Dias"/>
         <div class="t-card-body">
           <div class="t-role">Civil Engineer</div>
           <div class="t-name">Rohan Dias</div>
@@ -894,28 +902,8 @@ footer{
   </a>
 </div>
 
-<!-- Mobile Admin Shortcut Button (long-press to reveal) -->
-<button id="mobile-admin-btn" class="mobile-admin-btn" aria-label="Admin shortcut" title="Long-press to open admin">ADM</button>
-
-<script>
-// Footer long-press and multi-tap to reveal admin (mobile-safe)
-(function(){
-  const footer=document.querySelector('footer');
-  if(!footer) return;
-  let timer=null; let tapCount=0; let lastTap=0;
-  const holdMs=600;
-  // Only enable touch-based triggers on touch devices; desktop keeps Ctrl+Shift+A
-  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints>0;
-  const onStart=(e)=>{ if(isTouch && e.cancelable) e.preventDefault(); timer=setTimeout(()=>{ revealAdmin(); timer=null }, holdMs); };
-  const onEnd=(e)=>{ if(timer){ clearTimeout(timer); timer=null; }
-    const now=Date.now(); if(now-lastTap<900) tapCount++; else tapCount=1; lastTap=now; if(tapCount>=3 && isTouch){ revealAdmin(); tapCount=0 }
-  };
-  if(isTouch){
-    footer.addEventListener('touchstart', onStart, {passive:false});
-    footer.addEventListener('touchend', onEnd);
-  }
-})();
-</script>
+<!-- Mobile Admin Shortcut Button -->
+<button id="mobile-admin-btn" class="mobile-admin-btn" aria-label="Open admin panel" title="Open admin panel">ADMIN</button>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -1521,25 +1509,11 @@ function toast(msg,type="ok"){
   toast._t=setTimeout(()=>t.className="",3200);
 }
 
-// Mobile admin long-press shortcut
+// Mobile admin shortcut — authentication is still required after opening the panel.
 ;(function(){
   const btn=document.getElementById('mobile-admin-btn');
   if(!btn) return;
-  let timer=null;
-  const holdMs=800;
-  const start=(e)=>{
-    e.preventDefault();
-    btn.classList.add('active');
-    timer=setTimeout(()=>{ revealAdmin(); btn.classList.remove('active'); }, holdMs);
-  };
-  const cancel=()=>{ btn.classList.remove('active'); if(timer){ clearTimeout(timer); timer=null }};
-  btn.addEventListener('touchstart',start,{passive:false});
-  btn.addEventListener('mousedown',start);
-  btn.addEventListener('touchend',cancel);
-  btn.addEventListener('mouseup',cancel);
-  btn.addEventListener('mouseleave',cancel);
-  // Short tap shows a hint to long-press
-  btn.addEventListener('click',()=>{ toast('Long-press to open admin shortcut'); });
+  btn.addEventListener('click',()=>{ revealAdmin(); });
 })();
 </script>
 </body>
