@@ -648,7 +648,7 @@ footer{
     </div>
     <div class="team-stack rv delay2">
       <div class="t-card">
-        <img src="ronson.jpeg" alt="Ronson Dias"/>
+        <img id="team-ronson-img" src="ronson.jpeg" alt="Ronson Dias"/>
         <div class="t-card-body">
           <div class="t-role">Principal Architect</div>
           <div class="t-name">Ronson Dias</div>
@@ -661,7 +661,7 @@ footer{
         </div>
       </div>
       <div class="t-card">
-        <img src="rohan.jpeg" alt="Rohan Dias"/>
+        <img id="team-rohan-img" src="rohan.jpeg" alt="Rohan Dias"/>
         <div class="t-card-body">
           <div class="t-role">Civil Engineer</div>
           <div class="t-name">Rohan Dias</div>
@@ -845,6 +845,22 @@ footer{
     </div>
     <div class="pv-grid" id="pv-grid"></div>
 
+    <div class="adm-sec-title">Team Photos</div>
+    <div style="display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-bottom:2rem">
+      <div style="padding:1rem;border:1px solid var(--line);background:var(--ink3)">
+        <label class="fl">Ronson Dias photo</label>
+        <input class="fi" type="file" id="team-ronson-file" accept="image/*"/>
+        <button class="f-submit" onclick="saveTeamPhoto('ronson')" style="margin-top:.8rem;padding:.85rem 1.2rem"><span>Save Ronson Photo</span></button>
+        <div id="team-ronson-status" style="margin-top:.7rem;font-size:.72rem;color:var(--fog)"></div>
+      </div>
+      <div style="padding:1rem;border:1px solid var(--line);background:var(--ink3)">
+        <label class="fl">Rohan Dias photo</label>
+        <input class="fi" type="file" id="team-rohan-file" accept="image/*"/>
+        <button class="f-submit" onclick="saveTeamPhoto('rohan')" style="margin-top:.8rem;padding:.85rem 1.2rem"><span>Save Rohan Photo</span></button>
+        <div id="team-rohan-status" style="margin-top:.7rem;font-size:.72rem;color:var(--fog)"></div>
+      </div>
+    </div>
+
     <div class="fg">
       <label class="fl">Projects Delivered</label>
       <div style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:center">
@@ -928,6 +944,7 @@ emailjs.init('RzHS9M9l0j1sDKPl8'); // Replace with your EmailJS public key
 
 window.addEventListener("load",()=>{
   setTimeout(()=>{ document.getElementById("loader").classList.add("done"); initReveal(); },1500);
+  applyTeamPhotos();
 });
 
 const dot=document.getElementById("cur-dot"), ring=document.getElementById("cur-ring");
@@ -955,6 +972,38 @@ function countUp(el,target,sfx=""){
   let s=0; const dur=1800;
   const step=ts=>{ if(!s)s=ts; const p=Math.min((ts-s)/dur,1); el.textContent=Math.floor(p*target)+sfx; if(p<1)requestAnimationFrame(step); };
   requestAnimationFrame(step);
+}
+
+const TEAM_PHOTO_STORAGE_KEYS = {
+  ronson: "dias_team_ronson_photo",
+  rohan: "dias_team_rohan_photo"
+};
+
+function applyTeamPhotos(){
+  const ronsonImg=document.getElementById("team-ronson-img");
+  const rohanImg=document.getElementById("team-rohan-img");
+  if(ronsonImg) ronsonImg.src = localStorage.getItem(TEAM_PHOTO_STORAGE_KEYS.ronson) || "ronson.jpeg";
+  if(rohanImg) rohanImg.src = localStorage.getItem(TEAM_PHOTO_STORAGE_KEYS.rohan) || "rohan.jpeg";
+}
+
+function saveTeamPhoto(person){
+  const input=document.getElementById(person==="ronson"?"team-ronson-file":"team-rohan-file");
+  const status=document.getElementById(person==="ronson"?"team-ronson-status":"team-rohan-status");
+  const file=input?.files?.[0];
+  if(!file){ status.textContent="Please choose an image first."; return; }
+  if(!file.type.startsWith("image/")){ status.textContent="Please choose a valid image file."; return; }
+
+  const reader=new FileReader();
+  reader.onload=()=>{
+    localStorage.setItem(TEAM_PHOTO_STORAGE_KEYS[person], reader.result);
+    applyTeamPhotos();
+    status.textContent=(person==="ronson"?"Ronson":"Rohan")+" photo updated.";
+    input.value="";
+  };
+  reader.onerror=()=>{
+    status.textContent="The image could not be read.";
+  };
+  reader.readAsDataURL(file);
 }
 function getDeliveredCount(){
   const input=document.getElementById("adm-delivered-count");
