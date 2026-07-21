@@ -524,6 +524,11 @@ footer{
   .add-form{grid-template-columns:1fr}
   footer{padding:2.5rem 1.5rem;flex-direction:column;align-items:flex-start}
   #ag,#ad{padding:4rem 1.5rem}
+  /* Mobile typography + spacing tweaks */
+  h1.h1{font-size:2.2rem;line-height:1.05}
+  .t-name{font-size:1.15rem}
+  .t-det{font-size:.72rem}
+  .pf-grid{grid-template-columns:repeat(2,1fr);gap:8px}
   #lb-prev,#lb-next{display:none}
 }
 @media(max-width:600px){
@@ -896,15 +901,17 @@ footer{
   const footer=document.querySelector('footer');
   if(!footer) return;
   let timer=null; let tapCount=0; let lastTap=0;
-  const holdMs=700;
-  const onStart=(e)=>{ if(e.cancelable) e.preventDefault(); timer=setTimeout(()=>{ revealAdmin(); timer=null }, holdMs); };
+  const holdMs=600;
+  // Only enable touch-based triggers on touch devices; desktop keeps Ctrl+Shift+A
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints>0;
+  const onStart=(e)=>{ if(isTouch && e.cancelable) e.preventDefault(); timer=setTimeout(()=>{ revealAdmin(); timer=null }, holdMs); };
   const onEnd=(e)=>{ if(timer){ clearTimeout(timer); timer=null; }
-    const now=Date.now(); if(now-lastTap<900) tapCount++; else tapCount=1; lastTap=now; if(tapCount>=6){ revealAdmin(); tapCount=0 }
+    const now=Date.now(); if(now-lastTap<900) tapCount++; else tapCount=1; lastTap=now; if(tapCount>=3 && isTouch){ revealAdmin(); tapCount=0 }
   };
-  footer.addEventListener('touchstart', onStart, {passive:false});
-  footer.addEventListener('mousedown', onStart);
-  footer.addEventListener('touchend', onEnd);
-  footer.addEventListener('mouseup', onEnd);
+  if(isTouch){
+    footer.addEventListener('touchstart', onStart, {passive:false});
+    footer.addEventListener('touchend', onEnd);
+  }
 })();
 </script>
 
