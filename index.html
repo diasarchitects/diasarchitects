@@ -246,7 +246,8 @@ nav.stuck{background:rgba(8,8,8,.96);backdrop-filter:blur(12px);padding:1rem 4re
 /* Mobile admin shortcut */
 .mobile-admin-btn{position:fixed;right:14px;bottom:18px;z-index:9999;display:none;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--ink3);border:1px solid rgba(198,168,75,.12);color:var(--gold);font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
 .mobile-admin-btn:active{transform:translateY(1px)}
-@media (max-width:900px){.mobile-admin-btn{display:flex}}
+/* Keep the floating admin button disabled — admin available via footer long-press on mobile */
+.mobile-admin-btn{display:none!important}
 
 /*─────────────────────────────────────────
   PORTFOLIO
