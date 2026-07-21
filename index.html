@@ -511,9 +511,14 @@ footer{
   .n-ham{display:flex}
   #hero{grid-template-columns:1fr;min-height:auto}
   .hero-right{display:none}
+  .hero-right{display:block}
+  .hero-right-img{display:none}
+  .hero-right-tag{position:relative;bottom:auto;right:auto;margin-top:1rem;display:flex;align-items:center;padding:.9rem 1rem}
   .hero-left{padding:7rem 1.5rem 5rem}
   .sec{padding:4.5rem 1.5rem}
   .about-grid,.contact-grid{grid-template-columns:1fr;gap:3rem}
+  .t-card{grid-template-columns:90px 1fr;gap:1rem;align-items:center}
+  .t-card img,.t-card picture img{width:90px;height:90px;min-height:0;object-fit:cover;border-radius:8px;flex:none}
   .srv-grid,.proc-steps{grid-template-columns:1fr}
   .pf-grid{grid-template-columns:repeat(2,1fr)}
   .add-form{grid-template-columns:1fr}
@@ -620,7 +625,11 @@ footer{
     </div>
     <div class="team-stack rv delay2">
       <div class="t-card">
-        <img src="ronson.jpeg" alt="Ronson Dias"/>
+        <picture>
+          <source type="image/png" srcset="images/ronson-dias.png">
+          <source type="image/jpeg" srcset="images/ronson-dias.jpg">
+          <img src="images/ronson-dias.png" alt="Ronson Dias" loading="lazy">
+        </picture>
         <div class="t-card-body">
           <div class="t-role">Principal Architect</div>
           <div class="t-name">Ronson Dias</div>
@@ -633,7 +642,11 @@ footer{
         </div>
       </div>
       <div class="t-card">
-        <img src="rohan.jpeg" alt="Rohan Dias"/>
+        <picture>
+          <source type="image/png" srcset="images/rohan-dias.png">
+          <source type="image/jpeg" srcset="images/rohan-dias.jpg">
+          <img src="images/rohan-dias.png" alt="Rohan Dias" loading="lazy">
+        </picture>
         <div class="t-card-body">
           <div class="t-role">Civil Engineer</div>
           <div class="t-name">Rohan Dias</div>
@@ -876,6 +889,24 @@ footer{
 
 <!-- Mobile Admin Shortcut Button (long-press to reveal) -->
 <button id="mobile-admin-btn" class="mobile-admin-btn" aria-label="Admin shortcut" title="Long-press to open admin">ADM</button>
+
+<script>
+// Footer long-press and multi-tap to reveal admin (mobile-safe)
+(function(){
+  const footer=document.querySelector('footer');
+  if(!footer) return;
+  let timer=null; let tapCount=0; let lastTap=0;
+  const holdMs=700;
+  const onStart=(e)=>{ if(e.cancelable) e.preventDefault(); timer=setTimeout(()=>{ revealAdmin(); timer=null }, holdMs); };
+  const onEnd=(e)=>{ if(timer){ clearTimeout(timer); timer=null; }
+    const now=Date.now(); if(now-lastTap<900) tapCount++; else tapCount=1; lastTap=now; if(tapCount>=6){ revealAdmin(); tapCount=0 }
+  };
+  footer.addEventListener('touchstart', onStart, {passive:false});
+  footer.addEventListener('mousedown', onStart);
+  footer.addEventListener('touchend', onEnd);
+  footer.addEventListener('mouseup', onEnd);
+})();
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
