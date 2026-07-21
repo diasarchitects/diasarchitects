@@ -78,7 +78,7 @@ nav{
   transition:background .4s,padding .3s;
 }
 nav.stuck{background:rgba(8,8,8,.96);backdrop-filter:blur(12px);padding:1rem 4rem;border-bottom:1px solid var(--line)}
-.n-logo{display:flex;align-items:flex-end;gap: 0.75em;rem}
+.n-logo{display:flex;align-items:flex-end;gap:0.75rem}
 .n-logo-mark{
   width:84px;height:84px;border-radius:2px;
   display:flex;align-items:center;justify-content:center;overflow:hidden;
@@ -348,7 +348,7 @@ nav.stuck{background:rgba(8,8,8,.96);backdrop-filter:blur(12px);padding:1rem 4re
 #contact{background:var(--ink2)}
 .contact-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:6rem;margin-top:4rem;align-items:start}
 .c-info{display:flex;flex-direction:column;gap:2.2rem}
-.c-item{}
+.c-item{display:flex;flex-direction:column;gap:.2rem}
 .c-lbl{font-size:.55rem;letter-spacing:.28em;color:var(--gold);text-transform:uppercase;margin-bottom:.4rem}
 .c-val{font-size:.95rem;color:var(--cream);line-height:1.5}
 .c-val a{color:var(--cream);transition:color .25s}
@@ -802,8 +802,17 @@ footer{
     </div>
     <div class="pv-grid" id="pv-grid"></div>
 
+    <div class="fg">
+      <label class="fl">Projects Delivered</label>
+      <div style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:center">
+        <input class="fi" id="adm-delivered-count" placeholder="Leave blank to use total projects"/>
+        <button class="f-submit" onclick="applyDeliveredCount()" style="padding:.85rem 1.2rem"><span>Set</span></button>
+      </div>
+    </div>
+
     <!-- Project details form -->
     <div class="add-form">
+      <input type="hidden" id="pj-id"/>
       <div class="fg"><label class="fl">Project Name</label><input class="fi" id="pj-name" placeholder="Eg: Villa Serenova"/></div>
       <div class="fg">
         <label class="fl">Category</label>
@@ -815,7 +824,10 @@ footer{
         </select>
       </div>
       <div class="fg"><label class="fl">Year</label><input class="fi" id="pj-yr" placeholder="2024"/></div>
-      <button class="f-submit" onclick="addProject()" style="padding:.85rem 1.5rem"><span>Add ✓</span></button>
+      <div style="display:flex;gap:.8rem;align-items:center;flex-wrap:wrap">
+        <button class="f-submit" onclick="addProject()" style="padding:.85rem 1.5rem"><span id="pj-btn-label">Add ✓</span></button>
+        <button id="pj-cancel" class="btn-o" onclick="cancelProjectEdit()" style="display:none;padding:.85rem 1.5rem">Cancel</button>
+      </div>
     </div>
     <div id="up-status" style="display:none;margin-bottom:1.5rem;padding:1.2rem 1.5rem;border:1px solid var(--line);background:var(--ink3)">
       <div style="font-size:.7rem;letter-spacing:.15em;color:var(--gold);margin-bottom:.7rem" id="up-status-title">Uploading…</div>
@@ -898,7 +910,42 @@ function countUp(el,target,sfx=""){
   const step=ts=>{ if(!s)s=ts; const p=Math.min((ts-s)/dur,1); el.textContent=Math.floor(p*target)+sfx; if(p<1)requestAnimationFrame(step); };
   requestAnimationFrame(step);
 }
-const cntObs=new IntersectionObserver(e=>{ if(e[0].isIntersecting){ countUp(document.getElementById("cntProj"),50,"+"); cntObs.disconnect(); }},{threshold:.4});
+function getDeliveredCount(){
+  const input=document.getElementById("adm-delivered-count");
+  const override=parseInt(input?.value?.trim()||"",10);
+  if(!Number.isNaN(override) && override>=0) return override;
+  const stored=parseInt(localStorage.getItem("da_delivered_count")||"",10);
+  if(!Number.isNaN(stored) && stored>=0) return stored;
+  return projects.length;
+}
+function updateDeliveredCount(){
+  const el=document.getElementById("cntProj");
+  if(!el) return;
+  countUp(el, getDeliveredCount(), "+");
+}
+function applyDeliveredCount(){
+  const input=document.getElementById("adm-delivered-count");
+  if(!input) return;
+  const raw=input.value.trim();
+  if(raw===""){
+    localStorage.removeItem("da_delivered_count");
+    updateDeliveredCount();
+    toast("Projects delivered reset to the current project count.");
+    return;
+  }
+  const parsed=parseInt(raw,10);
+  if(Number.isNaN(parsed) || parsed<0){ toast("Enter a valid number.","err"); return; }
+  localStorage.setItem("da_delivered_count", String(parsed));
+  updateDeliveredCount();
+  toast("Projects delivered updated.");
+}
+function populateDeliveredCountField(){
+  const input=document.getElementById("adm-delivered-count");
+  if(!input) return;
+  const stored=localStorage.getItem("da_delivered_count");
+  input.value=stored||"";
+}
+const cntObs=new IntersectionObserver(e=>{ if(e[0].isIntersecting){ updateDeliveredCount(); cntObs.disconnect(); }},{threshold:.4});
 cntObs.observe(document.getElementById("hero"));
 
 /* PORTFOLIO */
@@ -929,6 +976,8 @@ async function loadProjects(){
         : (p.project_images?.length ? imgUrl(p.project_images.sort((a,b)=>a.sort_order-b.sort_order)[0].filename) : null)
     }));
     renderPF();
+    populateDeliveredCountField();
+    updateDeliveredCount();
   } catch(err){
     console.error(err);
     document.getElementById("pfGrid").innerHTML='<div class="pf-empty"><div class="pf-empty-icon">!</div><div class="pf-empty-text">Could not load portfolio.</div></div>';
@@ -1120,6 +1169,7 @@ async function doLogin(){
 function showDashboard(){
   document.getElementById("ag").style.display="none";
   document.getElementById("ad").classList.add("vis");
+  populateDeliveredCountField();
   renderAdmGrid();
 }
 async function doLogout(){
@@ -1133,10 +1183,44 @@ async function doLogout(){
 
 /* ADMIN UPLOAD */
 let pendingFiles=[], draggedIndex=-1;
+let editingProjectId=null;
 const dz=document.getElementById("dz");
 dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("over")});
 dz.addEventListener("dragleave",()=>dz.classList.remove("over"));
 dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("over");dzFiles(e.dataTransfer.files)});
+
+function setProjectFormMode(mode, project=null){
+  const hidden=document.getElementById("pj-id");
+  const nameInput=document.getElementById("pj-name");
+  const catSelect=document.getElementById("pj-cat");
+  const yearInput=document.getElementById("pj-yr");
+  const cancelBtn=document.getElementById("pj-cancel");
+  const btnLabel=document.getElementById("pj-btn-label");
+
+  if(mode === "edit" && project){
+    editingProjectId=project.id;
+    hidden.value=project.id;
+    nameInput.value=project.name||"";
+    catSelect.value=project.category||"residential";
+    yearInput.value=project.year||"";
+    btnLabel.textContent="Save Changes";
+    cancelBtn.style.display="inline-block";
+  } else {
+    editingProjectId=null;
+    hidden.value="";
+    nameInput.value="";
+    catSelect.value="residential";
+    yearInput.value="";
+    btnLabel.textContent="Add ✓";
+    cancelBtn.style.display="none";
+  }
+}
+
+function cancelProjectEdit(){
+  pendingFiles=[];
+  renderPreviewGrid();
+  setProjectFormMode("add");
+}
 
 function dzFiles(files){
   pendingFiles=Array.from(files);
@@ -1176,12 +1260,14 @@ function swapFiles(from,to){
 }
 
 async function addProject(){
+  const isEditing=Boolean(editingProjectId);
   const name=document.getElementById("pj-name").value.trim()||"Untitled";
   const cat=document.getElementById("pj-cat").value;
   const year=parseInt(document.getElementById("pj-yr").value.trim())||new Date().getFullYear();
   const fileInput=document.getElementById("dz-in");
   const files=pendingFiles;
-  if(!files.length){ toast("Please select at least one image first.","err"); return; }
+  const totalFiles=files.length;
+  if(!isEditing && !totalFiles){ toast("Please select at least one image first.","err"); return; }
 
   const btn=document.querySelector(".add-form .f-submit");
   const statusBox=document.getElementById("up-status");
@@ -1190,45 +1276,60 @@ async function addProject(){
   const bar=document.getElementById("up-bar");
   function setStatus(t,d,p){ statusTitle.textContent=t; statusDetail.textContent=d; bar.style.width=p+"%"; }
 
-  btn.disabled=true; btn.querySelector("span").textContent="Uploading...";
+  btn.disabled=true; btn.querySelector("span").textContent=isEditing?"Saving...":"Uploading...";
   statusBox.style.display="block";
-  setStatus("Creating project...","Getting ready...",0);
+  setStatus(isEditing?"Updating project...":"Creating project...",isEditing?"Applying your changes...":"Getting ready...",0);
 
-  let projectId=null;
+  let projectId=editingProjectId;
   const uploadedFiles=[];
   try {
-    const ext0=files[0].name.split(".").pop().toLowerCase();
-    const coverFilename=Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext0;
-
-    const {data:projData,error:projErr}=await sb.from(DB_TABLE).insert([{
-      name,category:cat,year,cover_filename:coverFilename
-    }]).select().single();
-    if(projErr) throw projErr;
-    projectId=projData.id;
-
-    for(let i=0;i<files.length;i++){
-      const file=files[i];
-      const pct=Math.round(((i+1)/files.length)*90);
-      setStatus("Uploading image "+(i+1)+" of "+files.length+"...",
-        file.name+" ("+( file.size/1024).toFixed(0)+" KB)",pct);
-      const safeName=i===0?coverFilename:Date.now()+"-"+Math.random().toString(36).slice(2)+"."+file.name.split(".").pop().toLowerCase();
-      const {error:upErr}=await sb.storage.from(STORAGE_BUCKET).upload(safeName,file,{cacheControl:"3600",upsert:false,contentType:file.type});
-      if(upErr) throw upErr;
-      uploadedFiles.push(safeName);
-      const {error:imgErr}=await sb.from(DB_IMAGES_TABLE).insert([{project_id:projectId,filename:safeName,sort_order:i}]);
-      if(imgErr) throw imgErr;
+    if(isEditing){
+      const {error:projErr}=await sb.from(DB_TABLE).update({name,category:cat,year}).eq("id",projectId);
+      if(projErr) throw projErr;
+    } else {
+      const ext0=files[0].name.split(".").pop().toLowerCase();
+      const coverFilename=Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext0;
+      const {data:projData,error:projErr}=await sb.from(DB_TABLE).insert([{
+        name,category:cat,year,cover_filename:coverFilename
+      }]).select().single();
+      if(projErr) throw projErr;
+      projectId=projData.id;
     }
 
-    setStatus("All "+files.length+" image"+(files.length>1?"s":"")+" uploaded!","Refreshing...",100);
+    if(totalFiles){
+      const {data:projMeta}=await sb.from(DB_TABLE).select("cover_filename").eq("id",projectId).single();
+      for(let i=0;i<files.length;i++){
+        const file=files[i];
+        const pct=Math.round(((i+1)/files.length)*90);
+        setStatus("Uploading image "+(i+1)+" of "+files.length+"...",
+          file.name+" ("+( file.size/1024).toFixed(0)+" KB)",pct);
+        const ext=file.name.split(".").pop().toLowerCase();
+        const safeName=(i===0 && !projMeta?.cover_filename && !isEditing)
+          ? Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext
+          : Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
+        const {error:upErr}=await sb.storage.from(STORAGE_BUCKET).upload(safeName,file,{cacheControl:"3600",upsert:false,contentType:file.type});
+        if(upErr) throw upErr;
+        uploadedFiles.push(safeName);
+        const {error:imgErr}=await sb.from(DB_IMAGES_TABLE).insert([{project_id:projectId,filename:safeName,sort_order:i}]);
+        if(imgErr) throw imgErr;
+        if(i===0 && !projMeta?.cover_filename){
+          await sb.from(DB_TABLE).update({cover_filename:safeName}).eq("id",projectId);
+        }
+      }
+      setStatus("All "+files.length+" image"+(files.length>1?"s":"")+" uploaded!","Refreshing...",100);
+    } else {
+      setStatus("Project updated!","Refreshing...",100);
+    }
+
     bar.style.background="#4ade80";
     await loadProjects(); renderAdmGrid();
-    toast(name+" added!");
+    toast(isEditing?"Project updated!":name+" added!");
     pendingFiles=[]; document.getElementById("pv-grid").innerHTML=""; fileInput.value=""; document.getElementById("pj-name").value="";
+    setProjectFormMode("add");
     setTimeout(()=>{ statusBox.style.display="none"; bar.style.background="var(--gold)"; bar.style.width="0%"; },3000);
   } catch(err){
     console.error(err);
-    // Avoid leaving an incomplete project visible when an image upload fails.
-    if(projectId){
+    if(!isEditing && projectId){
       try {
         await sb.from(DB_IMAGES_TABLE).delete().eq("project_id",projectId);
         if(uploadedFiles.length) await sb.storage.from(STORAGE_BUCKET).remove(uploadedFiles);
@@ -1241,7 +1342,7 @@ async function addProject(){
     bar.style.background="#e05555";
     toast("Upload failed: "+(err.message||"Unknown error"),"err");
   }
-  btn.disabled=false; btn.querySelector("span").textContent="Add";
+  btn.disabled=false; btn.querySelector("span").textContent="Add ✓";
 }
 
 async function delProject(id){
@@ -1284,7 +1385,14 @@ async function renderAdmGrid(){
       +'<div class="pf-over"><div class="pf-cat">'+category+'</div>'
       +'<div class="pf-name">'+name+'</div>'
       +'<div class="pf-yr">'+count+' photo'+(count!==1?"s":"")+'</div></div>'
-      +'<button class="pf-zoom adm-delete" style="transform:translate(-50%,-50%) scale(1);opacity:1;background:rgba(224,85,85,.9);border-color:#e05555;color:white">Delete X</button>';
+      +'<div style="position:absolute;top:1rem;right:1rem;display:flex;gap:.5rem;z-index:3">'
+      +'<button class="adm-edit" style="border:1px solid var(--gold);background:rgba(8,8,8,.75);color:var(--gold);padding:.4rem .7rem;font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;cursor:pointer">Edit</button>'
+      +'<button class="adm-delete" style="border:1px solid #e05555;background:rgba(224,85,85,.92);color:white;padding:.4rem .7rem;font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;cursor:pointer">Delete</button>'
+      +'</div>';
+    d.querySelector(".adm-edit").addEventListener("click",()=>{
+      setProjectFormMode("edit", p);
+      document.getElementById("admin").scrollIntoView({behavior:"smooth"});
+    });
     d.querySelector(".adm-delete").addEventListener("click",()=>delProject(p.id));
     g.appendChild(d);
   });
