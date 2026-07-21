@@ -78,7 +78,7 @@ nav{
   transition:background .4s,padding .3s;
 }
 nav.stuck{background:rgba(8,8,8,.96);backdrop-filter:blur(12px);padding:1rem 4rem;border-bottom:1px solid var(--line)}
-.n-logo{display:flex;align-items:flex-end;gap:0.75rem}
+.n-logo{display:flex;align-items:flex-end;gap: 0.75em;rem}
 .n-logo-mark{
   width:84px;height:84px;border-radius:2px;
   display:flex;align-items:center;justify-content:center;overflow:hidden;
@@ -348,7 +348,7 @@ nav.stuck{background:rgba(8,8,8,.96);backdrop-filter:blur(12px);padding:1rem 4re
 #contact{background:var(--ink2)}
 .contact-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:6rem;margin-top:4rem;align-items:start}
 .c-info{display:flex;flex-direction:column;gap:2.2rem}
-.c-item{display:flex;flex-direction:column;gap:.2rem}
+.c-item{}
 .c-lbl{font-size:.55rem;letter-spacing:.28em;color:var(--gold);text-transform:uppercase;margin-bottom:.4rem}
 .c-val{font-size:.95rem;color:var(--cream);line-height:1.5}
 .c-val a{color:var(--cream);transition:color .25s}
@@ -428,6 +428,16 @@ nav.stuck{background:rgba(8,8,8,.96);backdrop-filter:blur(12px);padding:1rem 4re
 .dz-txt{font-size:.78rem;color:var(--fog);line-height:1.7}
 .dz-txt strong{color:var(--gold)}
 .add-form{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:1rem;align-items:end;margin-bottom:1.5rem}
+.team-admin .add-form{grid-template-columns:1fr 1fr 1fr 1fr auto}
+.team-photo-preview{grid-column:1/-1;height:180px;border:1px dashed var(--line);background:var(--ink3);display:flex;align-items:center;justify-content:center;color:var(--fog);overflow:hidden;margin-top:.5rem}
+.team-photo-preview img{width:100%;height:100%;object-fit:cover}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;margin-top:1rem}
+.team-member-card{background:var(--ink3);border:1px solid var(--line);padding:1rem;display:grid;gap:.85rem}
+.team-member-photo{width:100%;aspect-ratio:4/3;overflow:hidden;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:var(--ink4)}
+.team-member-photo img{width:100%;height:100%;object-fit:cover}
+.team-member-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.team-member-actions button{border:1px solid var(--line2);background:none;color:var(--fog);padding:.55rem .85rem;font-size:.7rem;transition:all .25s}
+.team-member-actions button:hover{border-color:var(--gold);color:var(--gold)}
 .pv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.8rem;margin-top:1.5rem}
 .pv-thumb{position:relative;aspect-ratio:1;overflow:hidden;border:1px solid var(--line);cursor:grab;transition:all .3s;user-select:none}
 .pv-thumb.draggable{cursor:grabbing;opacity:.7;transform:scale(.95);border-color:var(--gold);background:rgba(198,168,75,.1)}
@@ -646,6 +656,7 @@ footer{
     <button class="pf-btn on" onclick="pfFilter('all',this)">All</button>
     <button class="pf-btn" onclick="pfFilter('residential',this)">Residential</button>
     <button class="pf-btn" onclick="pfFilter('interior',this)">Interior</button>
+    <button class="pf-btn" onclick="pfFilter('construction',this)">Construction</button>
   </div>
   <div class="pf-grid" id="pfGrid"></div>
 </section>
@@ -674,7 +685,7 @@ footer{
     <div class="srv-card"><div class="srv-num">03</div><div class="srv-ico">🪟</div><div class="srv-title">Interior Design</div><div class="srv-desc">Thoughtful interiors from space planning to material selection — environments that feel genuinely yours.</div><div class="srv-line"></div></div>
     <div class="srv-card"><div class="srv-num">04</div><div class="srv-ico">🌿</div><div class="srv-title">Landscape Design</div><div class="srv-desc">Outdoor spaces designed as seamless extensions of the architecture — gardens, courtyards, and terraces.</div><div class="srv-line"></div></div>
     <div class="srv-card"><div class="srv-num">05</div><div class="srv-ico">📐</div><div class="srv-title">3D Visualization</div><div class="srv-desc">Photorealistic renders and walkthroughs so you can experience your space long before it's built.</div><div class="srv-line"></div></div>
-    <div class="srv-card"><div class="srv-num">06</div><div class="srv-ico">📋</div><div class="srv-title">Project Management</div><div class="srv-desc">End-to-end site supervision, contractor coordination, and quality control through every phase.</div><div class="srv-line"></div></div>
+    <div class="srv-card"><div class="srv-num">06</div><div class="srv-ico">📋</div><div class="srv-title">Execution</div><div class="srv-desc">End-to-end execution from foundation to final completion. Every detail managed with precision, quality, and uncompromising craftsmanship.</div><div class="srv-line"></div></div>
   </div>
 </section>
 
@@ -802,17 +813,8 @@ footer{
     </div>
     <div class="pv-grid" id="pv-grid"></div>
 
-    <div class="fg">
-      <label class="fl">Projects Delivered</label>
-      <div style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:center">
-        <input class="fi" id="adm-delivered-count" placeholder="Leave blank to use total projects"/>
-        <button class="f-submit" onclick="applyDeliveredCount()" style="padding:.85rem 1.2rem"><span>Set</span></button>
-      </div>
-    </div>
-
     <!-- Project details form -->
     <div class="add-form">
-      <input type="hidden" id="pj-id"/>
       <div class="fg"><label class="fl">Project Name</label><input class="fi" id="pj-name" placeholder="Eg: Villa Serenova"/></div>
       <div class="fg">
         <label class="fl">Category</label>
@@ -824,10 +826,7 @@ footer{
         </select>
       </div>
       <div class="fg"><label class="fl">Year</label><input class="fi" id="pj-yr" placeholder="2024"/></div>
-      <div style="display:flex;gap:.8rem;align-items:center;flex-wrap:wrap">
-        <button class="f-submit" onclick="addProject()" style="padding:.85rem 1.5rem"><span id="pj-btn-label">Add ✓</span></button>
-        <button id="pj-cancel" class="btn-o" onclick="cancelProjectEdit()" style="display:none;padding:.85rem 1.5rem">Cancel</button>
-      </div>
+      <button class="f-submit" onclick="addProject()" style="padding:.85rem 1.5rem"><span>Add ✓</span></button>
     </div>
     <div id="up-status" style="display:none;margin-bottom:1.5rem;padding:1.2rem 1.5rem;border:1px solid var(--line);background:var(--ink3)">
       <div style="font-size:.7rem;letter-spacing:.15em;color:var(--gold);margin-bottom:.7rem" id="up-status-title">Uploading…</div>
@@ -835,6 +834,31 @@ footer{
         <div id="up-bar" style="height:100%;background:var(--gold);width:0%;transition:width .4s ease"></div>
       </div>
       <div id="up-status-detail" style="font-size:.68rem;color:var(--fog);margin-top:.6rem">Preparing…</div>
+    </div>
+
+    <!-- Site settings (editable from admin) -->
+    <div class="adm-sec-title">Site Settings</div>
+    <div class="add-form" style="margin-bottom:1rem">
+      <div class="fg"><label class="fl">Projects Delivered</label><input class="fi" id="site-projects" placeholder="10+"/></div>
+      <button class="f-submit" type="button" onclick="saveSiteSettings()" style="padding:.7rem 1.2rem"><span id="site-save-label">Save</span></button>
+    </div>
+
+    <div class="adm-sec-title">Team Manager</div>
+    <div class="team-admin">
+      <div class="add-form">
+        <div class="fg"><label class="fl">Role</label><input class="fi" id="team-role" placeholder="Principal Architect"/></div>
+        <div class="fg"><label class="fl">Name</label><input class="fi" id="team-name" placeholder="Ronson Dias"/></div>
+        <div class="fg"><label class="fl">Details</label><input class="fi" id="team-details" placeholder="Architecture Design & Planning"/></div>
+        <div class="fg"><label class="fl">Badge</label><input class="fi" id="team-badge" placeholder="B.Arch"/></div>
+        <div class="fg" style="grid-column:1/-1">
+          <label class="fl">Photo</label>
+          <input class="fi" type="file" id="team-photo" accept="image/*" onchange="teamPhotoSelected(event)"/>
+          <div id="team-photo-preview" class="team-photo-preview">Preview will appear here</div>
+        </div>
+        <button class="f-submit" onclick="saveTeamMember()" style="padding:.85rem 1.5rem"><span id="team-save-label">Add Member</span></button>
+        <button class="f-submit" type="button" onclick="cancelTeamEdit()" style="background:rgba(255,255,255,.06);border-color:var(--line2);color:var(--fog)"><span>Cancel</span></button>
+      </div>
+      <div class="team-grid" id="team-grid"></div>
     </div>
 
     <!-- Manage existing -->
@@ -869,6 +893,8 @@ const SUPABASE_ANON  = "sb_publishable_YZ2kLHJy_kxGBOe_p5IX3w_W_kb3sQu";
 const STORAGE_BUCKET  = "portfolio-images";
 const DB_TABLE        = "projects";
 const DB_IMAGES_TABLE = "project_images";
+const DB_TEAM_TABLE   = "team_members";
+const DB_SITE_TABLE   = "site_settings"; // table expected: (key text primary key, value text)
 const ENQUIRIES_TABLE = "enquiries";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
@@ -910,42 +936,7 @@ function countUp(el,target,sfx=""){
   const step=ts=>{ if(!s)s=ts; const p=Math.min((ts-s)/dur,1); el.textContent=Math.floor(p*target)+sfx; if(p<1)requestAnimationFrame(step); };
   requestAnimationFrame(step);
 }
-function getDeliveredCount(){
-  const input=document.getElementById("adm-delivered-count");
-  const override=parseInt(input?.value?.trim()||"",10);
-  if(!Number.isNaN(override) && override>=0) return override;
-  const stored=parseInt(localStorage.getItem("da_delivered_count")||"",10);
-  if(!Number.isNaN(stored) && stored>=0) return stored;
-  return projects.length;
-}
-function updateDeliveredCount(){
-  const el=document.getElementById("cntProj");
-  if(!el) return;
-  countUp(el, getDeliveredCount(), "+");
-}
-function applyDeliveredCount(){
-  const input=document.getElementById("adm-delivered-count");
-  if(!input) return;
-  const raw=input.value.trim();
-  if(raw===""){
-    localStorage.removeItem("da_delivered_count");
-    updateDeliveredCount();
-    toast("Projects delivered reset to the current project count.");
-    return;
-  }
-  const parsed=parseInt(raw,10);
-  if(Number.isNaN(parsed) || parsed<0){ toast("Enter a valid number.","err"); return; }
-  localStorage.setItem("da_delivered_count", String(parsed));
-  updateDeliveredCount();
-  toast("Projects delivered updated.");
-}
-function populateDeliveredCountField(){
-  const input=document.getElementById("adm-delivered-count");
-  if(!input) return;
-  const stored=localStorage.getItem("da_delivered_count");
-  input.value=stored||"";
-}
-const cntObs=new IntersectionObserver(e=>{ if(e[0].isIntersecting){ updateDeliveredCount(); cntObs.disconnect(); }},{threshold:.4});
+const cntObs=new IntersectionObserver(e=>{ if(e[0].isIntersecting){ countUp(document.getElementById("cntProj"),10,"+"); cntObs.disconnect(); }},{threshold:.4});
 cntObs.observe(document.getElementById("hero"));
 
 /* PORTFOLIO */
@@ -976,8 +967,6 @@ async function loadProjects(){
         : (p.project_images?.length ? imgUrl(p.project_images.sort((a,b)=>a.sort_order-b.sort_order)[0].filename) : null)
     }));
     renderPF();
-    populateDeliveredCountField();
-    updateDeliveredCount();
   } catch(err){
     console.error(err);
     document.getElementById("pfGrid").innerHTML='<div class="pf-empty"><div class="pf-empty-icon">!</div><div class="pf-empty-text">Could not load portfolio.</div></div>';
@@ -1008,13 +997,206 @@ function renderPF(){
   });
 }
 loadProjects();
+loadTeamMembers();
+loadSiteSettings();
 
-function pfFilter(cat,btn){
-  pfFilter_=cat;
-  document.querySelectorAll(".pf-btn").forEach(b=>b.classList.remove("on"));
-  btn.classList.add("on");
-  loadProjects();
+let teamMembers=[], teamPhotoFile=null, editingTeamId=null, editTeamOldPhoto=null;
+
+async function loadTeamMembers(){
+  try{
+    const {data,error}=await sb.from(DB_TEAM_TABLE).select("*").order("created_at",{ascending:true});
+    if(error) throw error;
+    teamMembers = data || [];
+  }catch(err){
+    console.error("Team load failed",err);
+    teamMembers = [];
+  }
+  renderTeamCards();
+  renderTeamAdminGrid();
 }
+
+/* SITE SETTINGS */
+let siteSettings = {};
+async function loadSiteSettings(){
+  try{
+    const {data,error} = await sb.from(DB_SITE_TABLE).select('value').eq('key','projects_delivered').single();
+    if(error && error.code !== 'PGRST116') throw error; // ignore 'no table' style errors
+    const val = data?.value ?? null;
+    if(val!==null){
+      siteSettings.projects_delivered = val;
+      const el = document.getElementById('cntProj'); if(el) el.textContent = val;
+      const inp = document.getElementById('site-projects'); if(inp) inp.value = val;
+    }
+  }catch(err){
+    console.warn('Could not load site settings',err);
+  }
+}
+
+async function saveSiteSettings(){
+  const inp = document.getElementById('site-projects');
+  if(!inp) return;
+  const val = inp.value.trim();
+  if(!val){ toast('Enter a value first','err'); return; }
+  const btn = document.getElementById('site-save-label')?.closest('button');
+  if(btn) btn.disabled=true;
+  try{
+    // upsert by key; requires a table `site_settings(key text primary key, value text)`
+    const payload = { key: 'projects_delivered', value: val };
+    const { error } = await sb.from(DB_SITE_TABLE).upsert([payload], { onConflict: 'key' });
+    if(error) throw error;
+    siteSettings.projects_delivered = val;
+    const el = document.getElementById('cntProj'); if(el) el.textContent = val;
+    toast('Projects count saved.');
+  }catch(err){
+    console.error(err);
+    toast('Could not save setting: '+(err.message||'Unknown error'),'err');
+  }
+  if(btn) btn.disabled=false;
+}
+
+function teamPhotoSelected(e){
+  const file=e.target.files[0];
+  teamPhotoFile = file||null;
+  const preview=document.getElementById("team-photo-preview");
+  if(file){
+    const url=URL.createObjectURL(file);
+    preview.innerHTML='<img src="'+url+'" alt="Photo preview"/>';
+  } else {
+    preview.textContent='Preview will appear here';
+  }
+}
+
+function resetTeamForm(){
+  editingTeamId=null;
+  editTeamOldPhoto=null;
+  teamPhotoFile=null;
+  document.getElementById("team-role").value="";
+  document.getElementById("team-name").value="";
+  document.getElementById("team-details").value="";
+  document.getElementById("team-badge").value="";
+  document.getElementById("team-photo").value="";
+  document.getElementById("team-save-label").textContent="Add Member";
+  document.getElementById("team-photo-preview").textContent='Preview will appear here';
+}
+
+function populateTeamForm(member){
+  editingTeamId=member.id;
+  editTeamOldPhoto=member.photo_filename||null;
+  document.getElementById("team-role").value=member.role||"";
+  document.getElementById("team-name").value=member.name||"";
+  document.getElementById("team-details").value=member.details||"";
+  document.getElementById("team-badge").value=member.badge||"";
+  document.getElementById("team-save-label").textContent="Update Member";
+  const preview=document.getElementById("team-photo-preview");
+  if(member.photo_filename){
+    preview.innerHTML='<img src="'+imgUrl(member.photo_filename)+'" alt="'+escapeHtml(member.name)+'"/>';
+  } else {
+    preview.textContent='Preview will appear here';
+  }
+}
+
+function cancelTeamEdit(){
+  resetTeamForm();
+}
+
+async function saveTeamMember(){
+  const role=document.getElementById("team-role").value.trim();
+  const name=document.getElementById("team-name").value.trim();
+  const details=document.getElementById("team-details").value.trim();
+  const badge=document.getElementById("team-badge").value.trim();
+  if(!role||!name){ toast("Please enter role and name for the team member.","err"); return; }
+  const btn=document.querySelector("#team-save-label").closest("button");
+  btn.disabled=true;
+  try{
+    let photoFilename = editTeamOldPhoto;
+    if(teamPhotoFile){
+      const ext=teamPhotoFile.name.split('.').pop().toLowerCase();
+      photoFilename = Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
+      const {error:upErr} = await sb.storage.from(STORAGE_BUCKET).upload(photoFilename, teamPhotoFile,{cacheControl:"3600",upsert:false,contentType:teamPhotoFile.type});
+      if(upErr) throw upErr;
+      if(editingTeamId && editTeamOldPhoto && editTeamOldPhoto!==photoFilename){
+        await sb.storage.from(STORAGE_BUCKET).remove([editTeamOldPhoto]);
+      }
+    }
+    if(editingTeamId){
+      const {error:updateErr} = await sb.from(DB_TEAM_TABLE).update({role,name,details,badge,photo_filename:photoFilename}).eq('id',editingTeamId);
+      if(updateErr) throw updateErr;
+      toast('Team member updated.');
+    } else {
+      if(!teamPhotoFile){ toast('Please select a photo for the team member.','err'); btn.disabled=false; return; }
+      const {error:insertErr}=await sb.from(DB_TEAM_TABLE).insert([{role,name,details,badge,photo_filename:photoFilename}]);
+      if(insertErr) throw insertErr;
+      toast('Team member added.');
+    }
+    await loadTeamMembers();
+    resetTeamForm();
+  }catch(err){
+    console.error(err);
+    toast('Could not save team member: '+(err.message||'Unknown error'),'err');
+  }
+  btn.disabled=false;
+}
+
+async function deleteTeamMember(id){
+  if(!confirm('Remove this team member?')) return;
+  try{
+    const {data,error}=await sb.from(DB_TEAM_TABLE).select('photo_filename').eq('id',id).single();
+    if(error) throw error;
+    const {error:delErr}=await sb.from(DB_TEAM_TABLE).delete().eq('id',id);
+    if(delErr) throw delErr;
+    if(data?.photo_filename){ await sb.storage.from(STORAGE_BUCKET).remove([data.photo_filename]); }
+    toast('Team member removed.');
+    await loadTeamMembers();
+  }catch(err){
+    console.error(err);
+    toast('Delete failed: '+(err.message||'Unknown error'),'err');
+  }
+}
+
+function renderTeamAdminGrid(){
+  const g=document.getElementById('team-grid');
+  g.innerHTML='';
+  if(!teamMembers.length){ g.innerHTML='<div class="adm-empty" style="grid-column:1/-1">No team members yet.</div>'; return; }
+  teamMembers.forEach(member=>{
+    const card=document.createElement('div'); card.className='team-member-card';
+    const photoWrap=document.createElement('div'); photoWrap.className='team-member-photo';
+    if(member.photo_filename){
+      const img=document.createElement('img'); img.src=imgUrl(member.photo_filename); img.alt=member.name; photoWrap.appendChild(img);
+    } else { photoWrap.textContent='No photo'; }
+    const role=document.createElement('div'); role.className='t-role'; role.textContent=member.role;
+    const nameEl=document.createElement('div'); nameEl.className='t-name'; nameEl.textContent=member.name;
+    const detailsEl=document.createElement('div'); detailsEl.className='t-det'; detailsEl.innerHTML=escapeHtml(member.details || '').replace(/\n/g,'<br/>');
+    const badge=document.createElement('span'); badge.className='t-badge'; badge.textContent=member.badge;
+    const actions=document.createElement('div'); actions.className='team-member-actions';
+    const editBtn=document.createElement('button'); editBtn.type='button'; editBtn.textContent='Edit'; editBtn.onclick=()=>populateTeamForm(member);
+    const delBtn=document.createElement('button'); delBtn.type='button'; delBtn.textContent='Delete'; delBtn.onclick=()=>deleteTeamMember(member.id);
+    actions.append(editBtn,delBtn);
+    card.append(photoWrap, role, nameEl, detailsEl, badge, actions);
+    g.appendChild(card);
+  });
+}
+
+function renderTeamCards(){
+  const stack=document.querySelector('.team-stack');
+  if(!stack) return;
+  if(!teamMembers.length) return;
+  stack.innerHTML = '';
+  teamMembers.forEach(member=>{
+    const card=document.createElement('div'); card.className='t-card';
+    if(member.photo_filename){
+      const photoDiv=document.createElement('div'); photoDiv.className='t-photo';
+      const img=document.createElement('img'); img.src=imgUrl(member.photo_filename); img.alt=member.name; photoDiv.appendChild(img);
+      card.appendChild(photoDiv);
+    }
+    const role=document.createElement('div'); role.className='t-role'; role.textContent=member.role;
+    const nameEl=document.createElement('div'); nameEl.className='t-name'; nameEl.textContent=member.name;
+    const detailsEl=document.createElement('div'); detailsEl.className='t-det'; detailsEl.innerHTML=escapeHtml(member.details||'').replace(/\n/g,'<br/>');
+    const badge=document.createElement('span'); badge.className='t-badge'; badge.textContent=member.badge;
+    card.append(role, nameEl, detailsEl, badge);
+    stack.appendChild(card);
+  });
+}
+
 
 /* LIGHTBOX */
 function lbOpen(projectIdx,e){
@@ -1169,7 +1351,6 @@ async function doLogin(){
 function showDashboard(){
   document.getElementById("ag").style.display="none";
   document.getElementById("ad").classList.add("vis");
-  populateDeliveredCountField();
   renderAdmGrid();
 }
 async function doLogout(){
@@ -1183,44 +1364,10 @@ async function doLogout(){
 
 /* ADMIN UPLOAD */
 let pendingFiles=[], draggedIndex=-1;
-let editingProjectId=null;
 const dz=document.getElementById("dz");
 dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("over")});
 dz.addEventListener("dragleave",()=>dz.classList.remove("over"));
 dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("over");dzFiles(e.dataTransfer.files)});
-
-function setProjectFormMode(mode, project=null){
-  const hidden=document.getElementById("pj-id");
-  const nameInput=document.getElementById("pj-name");
-  const catSelect=document.getElementById("pj-cat");
-  const yearInput=document.getElementById("pj-yr");
-  const cancelBtn=document.getElementById("pj-cancel");
-  const btnLabel=document.getElementById("pj-btn-label");
-
-  if(mode === "edit" && project){
-    editingProjectId=project.id;
-    hidden.value=project.id;
-    nameInput.value=project.name||"";
-    catSelect.value=project.category||"residential";
-    yearInput.value=project.year||"";
-    btnLabel.textContent="Save Changes";
-    cancelBtn.style.display="inline-block";
-  } else {
-    editingProjectId=null;
-    hidden.value="";
-    nameInput.value="";
-    catSelect.value="residential";
-    yearInput.value="";
-    btnLabel.textContent="Add ✓";
-    cancelBtn.style.display="none";
-  }
-}
-
-function cancelProjectEdit(){
-  pendingFiles=[];
-  renderPreviewGrid();
-  setProjectFormMode("add");
-}
 
 function dzFiles(files){
   pendingFiles=Array.from(files);
@@ -1260,14 +1407,12 @@ function swapFiles(from,to){
 }
 
 async function addProject(){
-  const isEditing=Boolean(editingProjectId);
   const name=document.getElementById("pj-name").value.trim()||"Untitled";
   const cat=document.getElementById("pj-cat").value;
   const year=parseInt(document.getElementById("pj-yr").value.trim())||new Date().getFullYear();
   const fileInput=document.getElementById("dz-in");
   const files=pendingFiles;
-  const totalFiles=files.length;
-  if(!isEditing && !totalFiles){ toast("Please select at least one image first.","err"); return; }
+  if(!files.length){ toast("Please select at least one image first.","err"); return; }
 
   const btn=document.querySelector(".add-form .f-submit");
   const statusBox=document.getElementById("up-status");
@@ -1276,60 +1421,45 @@ async function addProject(){
   const bar=document.getElementById("up-bar");
   function setStatus(t,d,p){ statusTitle.textContent=t; statusDetail.textContent=d; bar.style.width=p+"%"; }
 
-  btn.disabled=true; btn.querySelector("span").textContent=isEditing?"Saving...":"Uploading...";
+  btn.disabled=true; btn.querySelector("span").textContent="Uploading...";
   statusBox.style.display="block";
-  setStatus(isEditing?"Updating project...":"Creating project...",isEditing?"Applying your changes...":"Getting ready...",0);
+  setStatus("Creating project...","Getting ready...",0);
 
-  let projectId=editingProjectId;
+  let projectId=null;
   const uploadedFiles=[];
   try {
-    if(isEditing){
-      const {error:projErr}=await sb.from(DB_TABLE).update({name,category:cat,year}).eq("id",projectId);
-      if(projErr) throw projErr;
-    } else {
-      const ext0=files[0].name.split(".").pop().toLowerCase();
-      const coverFilename=Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext0;
-      const {data:projData,error:projErr}=await sb.from(DB_TABLE).insert([{
-        name,category:cat,year,cover_filename:coverFilename
-      }]).select().single();
-      if(projErr) throw projErr;
-      projectId=projData.id;
+    const ext0=files[0].name.split(".").pop().toLowerCase();
+    const coverFilename=Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext0;
+
+    const {data:projData,error:projErr}=await sb.from(DB_TABLE).insert([{
+      name,category:cat,year,cover_filename:coverFilename
+    }]).select().single();
+    if(projErr) throw projErr;
+    projectId=projData.id;
+
+    for(let i=0;i<files.length;i++){
+      const file=files[i];
+      const pct=Math.round(((i+1)/files.length)*90);
+      setStatus("Uploading image "+(i+1)+" of "+files.length+"...",
+        file.name+" ("+( file.size/1024).toFixed(0)+" KB)",pct);
+      const safeName=i===0?coverFilename:Date.now()+"-"+Math.random().toString(36).slice(2)+"."+file.name.split(".").pop().toLowerCase();
+      const {error:upErr}=await sb.storage.from(STORAGE_BUCKET).upload(safeName,file,{cacheControl:"3600",upsert:false,contentType:file.type});
+      if(upErr) throw upErr;
+      uploadedFiles.push(safeName);
+      const {error:imgErr}=await sb.from(DB_IMAGES_TABLE).insert([{project_id:projectId,filename:safeName,sort_order:i}]);
+      if(imgErr) throw imgErr;
     }
 
-    if(totalFiles){
-      const {data:projMeta}=await sb.from(DB_TABLE).select("cover_filename").eq("id",projectId).single();
-      for(let i=0;i<files.length;i++){
-        const file=files[i];
-        const pct=Math.round(((i+1)/files.length)*90);
-        setStatus("Uploading image "+(i+1)+" of "+files.length+"...",
-          file.name+" ("+( file.size/1024).toFixed(0)+" KB)",pct);
-        const ext=file.name.split(".").pop().toLowerCase();
-        const safeName=(i===0 && !projMeta?.cover_filename && !isEditing)
-          ? Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext
-          : Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
-        const {error:upErr}=await sb.storage.from(STORAGE_BUCKET).upload(safeName,file,{cacheControl:"3600",upsert:false,contentType:file.type});
-        if(upErr) throw upErr;
-        uploadedFiles.push(safeName);
-        const {error:imgErr}=await sb.from(DB_IMAGES_TABLE).insert([{project_id:projectId,filename:safeName,sort_order:i}]);
-        if(imgErr) throw imgErr;
-        if(i===0 && !projMeta?.cover_filename){
-          await sb.from(DB_TABLE).update({cover_filename:safeName}).eq("id",projectId);
-        }
-      }
-      setStatus("All "+files.length+" image"+(files.length>1?"s":"")+" uploaded!","Refreshing...",100);
-    } else {
-      setStatus("Project updated!","Refreshing...",100);
-    }
-
+    setStatus("All "+files.length+" image"+(files.length>1?"s":"")+" uploaded!","Refreshing...",100);
     bar.style.background="#4ade80";
     await loadProjects(); renderAdmGrid();
-    toast(isEditing?"Project updated!":name+" added!");
+    toast(name+" added!");
     pendingFiles=[]; document.getElementById("pv-grid").innerHTML=""; fileInput.value=""; document.getElementById("pj-name").value="";
-    setProjectFormMode("add");
     setTimeout(()=>{ statusBox.style.display="none"; bar.style.background="var(--gold)"; bar.style.width="0%"; },3000);
   } catch(err){
     console.error(err);
-    if(!isEditing && projectId){
+    // Avoid leaving an incomplete project visible when an image upload fails.
+    if(projectId){
       try {
         await sb.from(DB_IMAGES_TABLE).delete().eq("project_id",projectId);
         if(uploadedFiles.length) await sb.storage.from(STORAGE_BUCKET).remove(uploadedFiles);
@@ -1342,7 +1472,7 @@ async function addProject(){
     bar.style.background="#e05555";
     toast("Upload failed: "+(err.message||"Unknown error"),"err");
   }
-  btn.disabled=false; btn.querySelector("span").textContent="Add ✓";
+  btn.disabled=false; btn.querySelector("span").textContent="Add";
 }
 
 async function delProject(id){
@@ -1385,14 +1515,7 @@ async function renderAdmGrid(){
       +'<div class="pf-over"><div class="pf-cat">'+category+'</div>'
       +'<div class="pf-name">'+name+'</div>'
       +'<div class="pf-yr">'+count+' photo'+(count!==1?"s":"")+'</div></div>'
-      +'<div style="position:absolute;top:1rem;right:1rem;display:flex;gap:.5rem;z-index:3">'
-      +'<button class="adm-edit" style="border:1px solid var(--gold);background:rgba(8,8,8,.75);color:var(--gold);padding:.4rem .7rem;font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;cursor:pointer">Edit</button>'
-      +'<button class="adm-delete" style="border:1px solid #e05555;background:rgba(224,85,85,.92);color:white;padding:.4rem .7rem;font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;cursor:pointer">Delete</button>'
-      +'</div>';
-    d.querySelector(".adm-edit").addEventListener("click",()=>{
-      setProjectFormMode("edit", p);
-      document.getElementById("admin").scrollIntoView({behavior:"smooth"});
-    });
+      +'<button class="pf-zoom adm-delete" style="transform:translate(-50%,-50%) scale(1);opacity:1;background:rgba(224,85,85,.9);border-color:#e05555;color:white">Delete X</button>';
     d.querySelector(".adm-delete").addEventListener("click",()=>delProject(p.id));
     g.appendChild(d);
   });
