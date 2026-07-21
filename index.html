@@ -102,10 +102,26 @@ nav.stuck{background:rgba(8,8,8,.96);backdrop-filter:blur(12px);padding:1rem 4re
   min-height:100vh;display:grid;grid-template-columns:1fr 1fr;
   position:relative;overflow:hidden;
 }
+.hero-slideshow{
+  position:absolute;inset:0;z-index:0;overflow:hidden;
+  background:rgba(0,0,0,.12);
+}
+.hero-slideshow .pf-slide{
+  position:absolute;inset:0;opacity:0;transition:opacity .6s ease;
+  display:flex;align-items:center;justify-content:center;
+}
+.hero-slideshow .pf-slide.on{opacity:1}
+.hero-slideshow .pf-slide img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.55);}
+.hero-slideshow-overlay{display:none;}
+.hero-slideshow-dots{bottom:1rem;}
 .hero-left{
   display:flex;flex-direction:column;justify-content:center;
   padding:11rem 4rem 5rem;position:relative;z-index:2;
 }
+.hero-left::before{
+  content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,8,8,.7) 0%,rgba(8,8,8,.45) 35%,transparent 55%);z-index:0;
+}
+.hero-left *{position:relative;z-index:1;}
 .hero-right{
   position:relative;overflow:hidden;
 }
@@ -227,18 +243,33 @@ nav.stuck{background:rgba(8,8,8,.96);backdrop-filter:blur(12px);padding:1rem 4re
 .gold-rule{width:56px;height:1px;background:var(--gold);margin:2.2rem 0}
 .team-stack{display:flex;flex-direction:column;gap:1.4rem}
 .t-card{
+  display:flex;align-items:flex-start;gap:1.5rem;
   border:1px solid var(--line);padding:2rem;position:relative;overflow:hidden;
   background:var(--ink3);transition:border-color .3s;
 }
 .t-card::before{content:'';position:absolute;left:0;top:0;width:2px;height:100%;background:var(--gold);transform:scaleY(0);transform-origin:bottom;transition:transform .4s var(--ease)}
 .t-card:hover{border-color:var(--line2)}
+.t-card-img{width:144px;height:144px;flex-shrink:0;border:1px solid var(--line);overflow:hidden;background:#111}
+.t-card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.t-card-body{flex:1;display:flex;flex-direction:column;gap:.55rem;align-items:flex-start}
+.team-admin-grid{display:grid;gap:1rem;margin-top:1rem}
+.team-admin-card{
+  display:grid;grid-template-columns:100px 1fr auto;
+  gap:1rem;align-items:center;padding:1rem;border:1px solid var(--line);
+  background:var(--ink3);
+}
+.team-admin-preview{width:100px;height:100px;overflow:hidden;border:1px solid var(--line);background:#111}
+.team-admin-preview img{width:100%;height:100%;object-fit:cover}
+.team-admin-meta{display:flex;flex-direction:column;gap:.25rem}
+.team-admin-actions{display:flex;flex-direction:column;gap:.5rem}
+.team-admin-actions input[type=file]{color:var(--cream);}
 .t-card:hover::before{transform:scaleY(1)}
 .t-role{font-size:.55rem;letter-spacing:.28em;color:var(--gold);text-transform:uppercase;margin-bottom:.45rem}
 .t-name{font-family:var(--serif);font-size:1.55rem;color:var(--cream);font-weight:400;margin-bottom:.35rem}
 .t-det{font-size:.78rem;color:var(--fog);line-height:1.6}
 .t-det a{color:var(--gold2);transition:color .2s}
 .t-det a:hover{color:var(--gold)}
-.t-badge{display:inline-block;margin-top:.9rem;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--line2);color:var(--fog);padding:.3rem .7rem}
+.t-badge{display:inline-flex;max-width:max-content;margin-top:.9rem;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--line2);color:var(--fog);padding:.3rem .7rem;white-space:nowrap}
 
 /*─────────────────────────────────────────
   PORTFOLIO
@@ -555,6 +586,7 @@ footer{
 
 <!-- HERO -->
 <section id="hero">
+  <div class="hero-slideshow rv delay2" id="pfSlideshow"><div class="pf-slideshow-empty">Loading portfolio preview…</div></div>
   <div class="hero-left">
     <h1 class="h1">Where Vision<br/>Meets <em>Structure</em></h1>
     <p class="hero-desc">We design spaces that endure and inspire from expressive residential architecture to complex civil engineering. Every project is a story crafted with precision.</p>
@@ -605,30 +637,8 @@ footer{
       <p>Dias Architects is a full-service architecture and civil engineering practice rooted in the belief that every space should tell a story. We bring together creative vision and engineering rigour to deliver projects that stand as legacies.</p>
       <p>From the first sketch to the final fitting, we work closely with our clients, understanding their aspirations, their site, and their lifestyle, to produce architecture that is uniquely theirs.</p>
       <p>Based in Mangalore, India, we serve clients across the region with a portfolio spanning residential villas, commercial complexes, and heritage-inspired structures.</p>
-      <a href="#portfolio" class="btn-o" style="margin-top:1.8rem;display:inline-block">Explore Portfolio</a>
     </div>
-    <div class="team-stack rv delay2">
-      <div class="t-card">
-        <div class="t-role">Principal Architect</div>
-        <div class="t-name">Ronson Dias</div>
-        <div class="t-det">
-          Architecture Design &amp; Planning<br/>
-          <a href="tel:+919945228498">+91 99452 28498</a><br/>
-          <a href="mailto:ronsondias03@gmail.com">ronsondias03@gmail.com</a>
-        </div>
-        <span class="t-badge">B.Arch</span>
-      </div>
-      <div class="t-card">
-        <div class="t-role">Civil Engineer</div>
-        <div class="t-name">Rohan Dias</div>
-        <div class="t-det">
-          Structural &amp; Civil Engineering<br/>
-          <a href="tel:+919113007715">+91 91130 07715</a><br/>
-          <a href="mailto:rohandias24@gmail.com">rohandias24@gmail.com</a>
-        </div>
-        <span class="t-badge">Civil Engineer</span>
-      </div>
-    </div>
+    <div class="team-stack rv delay2" id="teamStack"></div>
   </div>
 </section>
 
@@ -642,8 +652,6 @@ footer{
   </div>
   <div class="pf-filters rv delay1" id="pfFilters">
     <button class="pf-btn on" onclick="pfFilter('all',this)">All</button>
-    <button class="pf-btn" onclick="pfFilter('residential',this)">Residential</button>
-    <button class="pf-btn" onclick="pfFilter('interior',this)">Interior</button>
   </div>
   <div class="pf-grid" id="pfGrid"></div>
 </section>
@@ -800,6 +808,9 @@ footer{
     </div>
     <div class="pv-grid" id="pv-grid"></div>
 
+    <div class="adm-sec-title">Team Photo Manager</div>
+    <div id="team-admin-grid" class="team-admin-grid"></div>
+
     <div class="fg">
       <label class="fl">Projects Delivered</label>
       <div style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:center">
@@ -817,6 +828,7 @@ footer{
         <select class="fs" id="pj-cat">
           <option value="residential">Residential</option>
           <option value="commercial">Commercial</option>
+          <option value="turnkey">TURNKEY</option>
           <option value="interior">Interior</option>
           <option value="landscape">Landscape</option>
         </select>
@@ -914,13 +926,125 @@ function getDeliveredCount(){
   if(!Number.isNaN(override) && override>=0) return override;
   const stored=parseInt(localStorage.getItem("da_delivered_count")||"",10);
   if(!Number.isNaN(stored) && stored>=0) return stored;
-  return projects.length;
+  return allProjects.length;
 }
 function updateDeliveredCount(){
   const el=document.getElementById("cntProj");
   if(!el) return;
   countUp(el, getDeliveredCount(), "+");
 }
+
+const TEAM_STORAGE_KEY = "da_team_photos";
+const defaultTeamMembers = [
+  {
+    key: "ronson",
+    role: "Principal Architect",
+    name: "Ronson Dias",
+    detail: "Architecture Design & Planning",
+    phone: "+91 99452 28498",
+    email: "ronsondias03@gmail.com",
+    badge: "B.Arch",
+    image: ""
+  },
+  {
+    key: "rohan",
+    role: "Principal Engineer",
+    name: "Rohan Dias",
+    detail: "Structural & Civil Engineering",
+    phone: "+91 91130 07715",
+    email: "rohandias24@gmail.com",
+    badge: "Civil Engineering",
+    image: ""
+  }
+];
+let teamMembers = [];
+
+function getTeamImageUrl(filename){
+  return filename ? imgUrl(filename) : '';
+}
+
+function loadTeamMembers(){
+  const stored = JSON.parse(localStorage.getItem(TEAM_STORAGE_KEY) || "{}");
+  teamMembers = defaultTeamMembers.map(member => ({
+    ...member,
+    image: stored[member.key] || member.image || ""
+  }));
+}
+
+function saveTeamImage(memberKey, filename){
+  const stored = JSON.parse(localStorage.getItem(TEAM_STORAGE_KEY) || "{}");
+  stored[memberKey] = filename;
+  localStorage.setItem(TEAM_STORAGE_KEY, JSON.stringify(stored));
+}
+
+function renderTeamCards(){
+  const container = document.getElementById('teamStack');
+  if(!container) return;
+  container.innerHTML = '';
+  teamMembers.forEach(member => {
+    const card = document.createElement('div');
+    card.className = 't-card';
+    const imgUrl = getTeamImageUrl(member.image);
+    card.innerHTML =
+      '<div class="t-card-img"><img src="' + (imgUrl || 'https://via.placeholder.com/144?text=Photo') + '" alt="' + escapeHtml(member.name) + '"/></div>' +
+      '<div class="t-card-body">' +
+      '<div class="t-role">' + escapeHtml(member.role) + '</div>' +
+      '<div class="t-name">' + escapeHtml(member.name) + '</div>' +
+      '<div class="t-det">' + escapeHtml(member.detail) + '<br/>' +
+      '<a href="tel:' + escapeHtml(member.phone) + '">' + escapeHtml(member.phone) + '</a><br/>' +
+      '<a href="mailto:' + escapeHtml(member.email) + '">' + escapeHtml(member.email) + '</a>' +
+      '</div>' +
+      '<span class="t-badge">' + escapeHtml(member.badge) + '</span>' +
+      '</div>';
+    container.appendChild(card);
+  });
+}
+
+function renderTeamAdmin(){
+  const grid = document.getElementById('team-admin-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  teamMembers.forEach(member => {
+    const row = document.createElement('div');
+    row.className = 'team-admin-card';
+    const imgUrl = getTeamImageUrl(member.image) || 'https://via.placeholder.com/100?text=Photo';
+    row.innerHTML =
+      '<div class="team-admin-preview"><img src="' + imgUrl + '" alt="' + escapeHtml(member.name) + '"/></div>' +
+      '<div class="team-admin-meta">' +
+        '<div class="t-role">' + escapeHtml(member.role) + '</div>' +
+        '<div class="t-name">' + escapeHtml(member.name) + '</div>' +
+        '<div class="t-det">' + escapeHtml(member.detail) + '</div>' +
+      '</div>' +
+      '<div class="team-admin-actions">' +
+        '<label class="btn-o" style="padding:.55rem .9rem;cursor:pointer;display:inline-block">Upload Image' +
+          '<input type="file" accept="image/*" style="display:none" onchange="uploadTeamImage(\'' + member.key + '\', this.files)"/>' +
+        '</label>' +
+      '</div>';
+    grid.appendChild(row);
+  });
+}
+
+async function uploadTeamImage(memberKey, files){
+  if(!files || !files.length) return;
+  const file = files[0];
+  const filename = 'team-photos/' + memberKey + '-' + Date.now() + '.' + file.name.split('.').pop().toLowerCase();
+  const { error } = await sb.storage.from(STORAGE_BUCKET).upload(filename, file, { cacheControl: '3600', upsert: true, contentType: file.type });
+  if(error){
+    console.error(error);
+    toast('Team photo upload failed.','err');
+    return;
+  }
+  saveTeamImage(memberKey, filename);
+  loadTeamMembers();
+  renderTeamCards();
+  renderTeamAdmin();
+  toast('Team photo updated.');
+}
+
+loadTeamMembers();
+renderTeamCards();
+renderTeamAdmin();
+
 function applyDeliveredCount(){
   const input=document.getElementById("adm-delivered-count");
   if(!input) return;
@@ -947,7 +1071,7 @@ const cntObs=new IntersectionObserver(e=>{ if(e[0].isIntersecting){ updateDelive
 cntObs.observe(document.getElementById("hero"));
 
 /* PORTFOLIO */
-let projects=[], pfFilter_="all", lbIdx=0, lbProject=null;
+let allProjects=[], pfFilter_="all", lbIdx=0, lbProject=null;
 
 function imgUrl(filename){
   return sb.storage.from(STORAGE_BUCKET).getPublicUrl(filename).data.publicUrl;
@@ -964,15 +1088,15 @@ async function loadProjects(){
     let query = sb.from(DB_TABLE)
       .select("*, project_images(id, filename, sort_order)")
       .order("created_at", {ascending:false});
-    if(pfFilter_ !== "all") query = query.eq("category", pfFilter_);
     const { data, error } = await query;
     if(error) throw error;
-    projects = (data||[]).map(p=>({
+    allProjects = (data||[]).map(p=>({
       ...p,
       images: (p.project_images||[]).sort((a,b)=>a.sort_order-b.sort_order),
       coverImg: p.cover_filename ? imgUrl(p.cover_filename)
         : (p.project_images?.length ? imgUrl(p.project_images.sort((a,b)=>a.sort_order-b.sort_order)[0].filename) : null)
     }));
+    renderFilters();
     renderPF();
     populateDeliveredCountField();
     updateDeliveredCount();
@@ -982,8 +1106,38 @@ async function loadProjects(){
   }
 }
 
+function formatCategoryLabel(category){
+  if(!category) return '';
+  const key = category.toLowerCase();
+  if(key === 'construction' || key === 'turnkey') return 'Turnkey';
+  return category.charAt(0).toUpperCase() + category.slice(1);
+}
+
+function renderFilters(){
+  const categories = Array.from(new Set(allProjects.map(p=>p.category).filter(Boolean)));
+  const order = ['residential','interior','turnkey','construction','commercial'];
+  categories.sort((a,b)=>{
+    const ka = a.toLowerCase();
+    const kb = b.toLowerCase();
+    const ia = order.indexOf(ka === 'construction' ? 'turnkey' : ka);
+    const ib = order.indexOf(kb === 'construction' ? 'turnkey' : kb);
+    if(ia === -1 && ib === -1) return a.localeCompare(b,undefined,{sensitivity:'base'});
+    if(ia === -1) return 1;
+    if(ib === -1) return -1;
+    return ia - ib;
+  });
+  const filterBar = document.getElementById('pfFilters');
+  if(!filterBar) return;
+  const active = pfFilter_;
+  filterBar.innerHTML = '<button class="pf-btn'+(active==='all'?' on':'')+'" onclick="pfFilter(\'all\',this)">All</button>';
+  categories.forEach(cat=>{
+    const label = formatCategoryLabel(cat);
+    filterBar.innerHTML += '<button class="pf-btn'+(active===cat?' on':'')+'" onclick="pfFilter(\''+cat+'\',this)">'+label+'</button>';
+  });
+}
+
 function renderPF(){
-  const filtered = pfFilter_==="all" ? projects : projects.filter(p=>p.category===pfFilter_);
+  const filtered = pfFilter_==="all" ? allProjects : allProjects.filter(p=>p.category===pfFilter_);
   const g=document.getElementById("pfGrid");
   g.innerHTML="";
   if(!filtered.length){
@@ -994,7 +1148,7 @@ function renderPF(){
     const d=document.createElement("div"); d.className="pf-item";
     const count=p.images?.length||0;
     const name=escapeHtml(p.name);
-    const category=escapeHtml(p.category);
+    const category=escapeHtml(formatCategoryLabel(p.category));
     const year=escapeHtml(p.year);
     const multiLabel = count>1 ? ' &nbsp;&middot;&middot;&middot; <span style="font-size:.55rem;color:var(--gold);letter-spacing:.15em">'+count+' PHOTOS</span>' : '';
     d.innerHTML='<img src="'+(p.coverImg||'')+'" alt="'+name+'" loading="lazy"/>'
@@ -1011,13 +1165,13 @@ function pfFilter(cat,btn){
   pfFilter_=cat;
   document.querySelectorAll(".pf-btn").forEach(b=>b.classList.remove("on"));
   btn.classList.add("on");
-  loadProjects();
+  renderPF();
 }
 
 /* LIGHTBOX */
 function lbOpen(projectIdx,e){
   if(e) e.stopPropagation();
-  const filtered = pfFilter_==="all" ? projects : projects.filter(p=>p.category===pfFilter_);
+  const filtered = pfFilter_==="all" ? allProjects : allProjects.filter(p=>p.category===pfFilter_);
   lbProject=filtered[projectIdx]; lbIdx=0;
   lbShow();
   lbBuildStrip();
@@ -1378,7 +1532,7 @@ async function renderAdmGrid(){
     const d=document.createElement("div"); d.className="pf-item";
     const count=p.images?.length||0;
     const name=escapeHtml(p.name);
-    const category=escapeHtml(p.category);
+    const category=escapeHtml(formatCategoryLabel(p.category));
     d.innerHTML=(p.coverImg?'<img src="'+p.coverImg+'" alt="'+name+'" loading="lazy"/>':"")
       +'<div class="pf-over"><div class="pf-cat">'+category+'</div>'
       +'<div class="pf-name">'+name+'</div>'
